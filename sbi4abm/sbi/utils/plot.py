@@ -326,7 +326,7 @@ def pairplot(
                         ),
                     )
                     positions = np.vstack([X.ravel(), Y.ravel()])
-                    Z = np.reshape(density(positions).T, X.shape)
+                    Z = np.reshape(density(positions).t, X.shape)
 
                     if opts["upper"][n] == "kde" or opts["upper"][n] == "kde2d":
                         h = plt.imshow(
@@ -513,7 +513,7 @@ def conditional_pairplot(
             warn_about_deprecation=False,
         ).numpy()
         h = plt.imshow(
-            p_image.T,
+            p_image.t,
             origin="lower",
             extent=[
                 limits[col, 0],
