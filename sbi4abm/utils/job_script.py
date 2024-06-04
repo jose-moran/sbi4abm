@@ -411,6 +411,7 @@ if __name__ == "__main__":
                 num_workers=args.nw,
                 z_score_x=z_score_x,
                 outloc=outloc,
+                max_num_epochs=1,
             )
             io.save_output(posteriors, samples, ranks, outloc)
         else:

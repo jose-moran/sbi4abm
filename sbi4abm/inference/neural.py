@@ -72,10 +72,17 @@ def sbi_training(
     sbi_simulator, sbi_prior = prepare_for_sbi(simulator, prior)
     posteriors = []
     proposal = sbi_prior
-    if method == "SNPE":
-        inference = SNPE(prior=sbi_prior, density_estimator=density_estimator)
-    elif method == "SNRE":
-        inference = SNRE(prior=sbi_prior, classifier=density_estimator)
+    # if method == "SNPE":
+    #     inference = SNPE(prior=sbi_prior, density_estimator=density_estimator)
+    # elif method == "SNRE":
+    #     inference = SNRE(prior=sbi_prior, classifier=density_estimator)
+    match method:
+        case "SNPE":
+            inference = SNPE(prior=sbi_prior, density_estimator=density_estimator)
+        case "SNRE":
+            inference = SNRE(prior=sbi_prior, classifier=density_estimator)
+        case _:
+            raise ValueError("Method must be one of 'SNPE' or 'SNRE'")
 
     for sim_count in n_sims:
         theta, x = simulate_for_sbi(
@@ -84,20 +91,23 @@ def sbi_training(
         # This is usually for reshaping for the embedding net
         x = sim_postprocess(x)
         print("Shape of simulated batch of data", x.size())
-        if method == "SNPE":
-            density_estimator = inference.append_simulations(
-                theta, x, proposal=proposal
-            )
-            print("Train")
-            density_estimator = density_estimator.train(
-                z_score_x=z_score_x, max_num_epochs=max_num_epochs
-            )
-        elif method == "SNRE":
-            density_estimator = inference.append_simulations(theta, x)
-            print("Train")
-            density_estimator = density_estimator.train(
-                z_score_x=z_score_x, max_num_epochs=max_num_epochs
-            )
+        match method:
+            case "SNPE":
+                density_estimator = inference.append_simulations(
+                    theta, x, proposal=proposal
+                )
+                print("Train")
+                density_estimator = density_estimator.train(
+                    z_score_x=z_score_x, max_num_epochs=max_num_epochs
+                )
+            case "SNRE":
+                density_estimator = inference.append_simulations(theta, x)
+                print("Train")
+                density_estimator = density_estimator.train(
+                    z_score_x=z_score_x, max_num_epochs=max_num_epochs
+                )
+            case _:
+                raise ValueError("Method must be one of 'SNPE' or 'SNRE")
         posterior = inference.build_posterior(density_estimator)
         posteriors.append(posterior)
         proposal = posterior.set_default_x(y)

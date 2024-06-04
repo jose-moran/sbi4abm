@@ -5,5 +5,5 @@ class Model(ABC):
     def __init__(self):
         pass
 
-    def simulate(self, parameters):
+    def simulate(self, **parameters):
         pass
