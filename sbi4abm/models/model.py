@@ -1,9 +1,9 @@
 from abc import ABC
+from typing import Any, Optional
 
 
 class Model(ABC):
-    def __init__(self):
-        pass
-
-    def simulate(self, **parameters):
+    def simulate(
+        self, t_max: int, parameters: dict[str, Any], seed: Optional[int], **kwargs
+    ):
         pass
